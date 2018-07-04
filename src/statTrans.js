@@ -52,11 +52,11 @@ async function statTrans(trans) {
         } catch (ex) {
             isPageFullLoaded = false;
         }
-        await delay10Secs();
+        // await delay10Secs();
 
         const transOfUrl = groupedTrans[url] || [];
         for (let j = 0; j < transOfUrl.length; j++) {
-            const tran = transOfUrl[i];
+            const tran = transOfUrl[j];
             let stats = null;
             try {
                 stats = await page.evaluate(function (tran) {
