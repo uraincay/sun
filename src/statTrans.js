@@ -5,9 +5,9 @@ function validateTran(tran) {
     if (tran == null) {
         throw new Error('tran is null');
     }
-    const {fxurl, type, xpath} = tran;
+    const {fxurl, type, xpath, transtype} = tran;
     if (fxurl == null || type == null || xpath == null) {
-        throw new Error(`fxurl, type, xpath is required, tran = ${JSON.stringify(tran)}`);
+        throw new Error(`fxurl, type, xpath, transtype is required, tran = ${JSON.stringify(tran)}`);
     }
 }
 
@@ -62,41 +62,43 @@ async function statTrans(trans) {
                 stats = await page.evaluate(function (tran) {
                     const isSDKInstalled = !!(window._agl && window._agl.isAngelia);
                     let matchedStatus = 'unknown';
-                    const {type, xpath} = tran;
-                    // domid
-                    if (type === 1) {
-                        const node = document.getElementById(xpath);
-                        matchedStatus = node == null ? 'not_match' : 'match';
-                    } else if (type === 0) { // xpath
-                        function isMatch(root, xpath) {
-                            const parts = xpath.split('>');
-                            const regx = /(.+)\[(\d+)\](?:\[@id="(.+)"\])?/;
+                    const {type, xpath, transtype} = tran;
+                    if (transtype !== 3) {
+                        // domid
+                        if (type === 1) {
+                            const node = document.getElementById(xpath);
+                            matchedStatus = node == null ? 'not_match' : 'match';
+                        } else if (type === 0) { // xpath
+                            function isMatch(root, xpath) {
+                                const parts = xpath.split('>');
+                                const regx = /(.+)\[(\d+)\](?:\[@id="(.+)"\])?/;
 
-                            function queryNode(parent, part) {
-                                const matches = part.match(regx);
-                                const tag = matches[1];
-                                const index = matches[2];
-                                if (tag == null || index == null) {
-                                    return null;
+                                function queryNode(parent, part) {
+                                    const matches = part.match(regx);
+                                    const tag = matches[1];
+                                    const index = matches[2];
+                                    if (tag == null || index == null) {
+                                        return null;
+                                    }
+                                    const id = matches[3];
+                                    const candidateNodes = parent.querySelectorAll(`:scope>${tag}`) || [];
+                                    const candidateNode = candidateNodes[(Number(index) - 1)];
+                                    if (candidateNode == null) {
+                                        return null;
+                                    }
+                                    if (id && candidateNode.id !== id) {
+                                        return null;
+                                    }
+                                    return candidateNode;
                                 }
-                                const id = matches[3];
-                                const candidateNodes = parent.querySelectorAll(`:scope>${tag}`) || [];
-                                const candidateNode = candidateNodes[(Number(index) - 1)];
-                                if (candidateNode == null) {
-                                    return null;
+                                let node = root;
+                                for(let i = 0; i < parts.length && node; i++) {
+                                    node = queryNode(node, parts[i]);
                                 }
-                                if (id && candidateNode.id !== id) {
-                                    return null;
-                                }
-                                return candidateNode;
+                                return node != null;
                             }
-                            let node = root;
-                            for(let i = 0; i < parts.length && node; i++) {
-                                node = queryNode(node, parts[i]);
-                            }
-                            return node != null;
+                            matchedStatus = isMatch(window.document, xpath) ? 'match' : 'not_match';
                         }
-                        matchedStatus = isMatch(window.document, xpath) ? 'match' : 'not_match';
                     }
                     return {matchedStatus, isSDKInstalled};
                 }, tran);
