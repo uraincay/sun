@@ -123,8 +123,6 @@ async function statUrls(urls) {
         return []
     }
     const result = [];
-    const groupedTrans = _.groupBy(trans, tran => tran.fxurl);
-    const urls = Object.keys(groupedTrans);
     const browser = await puppeteer.launch({
         args: ['--no-sandbox'],
         devtools: false

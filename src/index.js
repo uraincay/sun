@@ -7,7 +7,7 @@ const _ = require('lodash');
 // parse application/json
 app.use(bodyParser.json());
 
-app.post('/sun/stattran', async function (req, res) {
+app.post('/sun/stattrans', async function (req, res) {
     const trans = req.body.trans || [];
     if (trans.length === 0) {
         res.send([]);
@@ -26,7 +26,7 @@ app.post('/sun/stattran', async function (req, res) {
     });
 });
 
-app.post('/sun/staturl', async function (req, res) {
+app.post('/sun/staturls', async function (req, res) {
     const urls = req.body.urls || [];
     if (urls.length === 0) {
         res.send([]);
