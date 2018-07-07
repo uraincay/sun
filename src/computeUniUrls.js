@@ -20,7 +20,7 @@ function pickUrls(urls) {
         return [];
     }
     const shuffledUrls = _.chain(urls).uniq().shuffle().value();
-    const pickedUrls = shuffledUrls.slice(0, Math.max(3, shuffledUrls.length));
+    const pickedUrls = shuffledUrls.slice(0, Math.min(3, shuffledUrls.length));
 
     return pickedUrls;
 }
