@@ -53,6 +53,7 @@ async function getUrlsDistance(url1, url2) {
         const innerHTML1 = resp1.data.innerHTML;
         const innerHTML2 = resp2.data.innerHTML;
         const {error, errorMessage, data} = await getDistance(innerHTML1, innerHTML2);
+        console.log(`innerhtml1=${innerHTML1}, innerHTML2=${innerHTML2}, distance=${data.distance}`);
         if (error) {
             return {
                 error: 1,
@@ -72,4 +73,4 @@ async function getUrlsDistance(url1, url2) {
     }
 }
 
-module.exports = {getUrlsDistance};
+module.exports = getUrlsDistance;

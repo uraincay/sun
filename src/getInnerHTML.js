@@ -25,7 +25,7 @@ async function getInnerHTML(url) {
         await browser.close();
         return {
             error: 1,
-            errorMessage: `page is not opened, url = ${url}, error=${err}`
+            errorMessage: `page is not opened, url = ${url}, error=${ex}`
         }
     }
 

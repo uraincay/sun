@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const getUrlsDistance = require('./getUrlsDistance');
-const MATCH_DISTANCE = 0.8;
+const MATCH_DISTANCE = 0.95;
 
 function getUrlWithoutQuery(url) {
     if (url == null) {
@@ -37,7 +37,7 @@ async function getUniurls(urls) {
         for (let i = 0; i < candidates.length; i++) {
             const candidate = candidates[i];
             const urlsTobeVerified = groupedUrls[candidate];
-            const randomPairs = getRandomParis(urlsTobeVerified);
+            const randomPairs = getRandomParis(candidate, urlsTobeVerified);
             const distanceResults = await Promise.all(randomPairs.map(([url1, url2]) => getUrlsDistance(url1, url2)));
             const errorDistanceResults = distanceResults.filter(distanceResult => distanceResult.error);
             if (errorDistanceResults.length > 0) {
