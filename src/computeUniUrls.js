@@ -44,7 +44,7 @@ async function computeUniUrls(urls) {
         return {
             error: 0,
             data: {
-                uniurls: urls,
+                uniUrls: urls,
                 undeterminedUrls: []
             }
         };
