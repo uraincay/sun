@@ -3,9 +3,24 @@ const bodyParser = require('body-parser');
 const app = express();
 const statistic = require('./statistic');
 const _ = require('lodash');
+const getUniurls = require('./getUniurls');
+
 
 // parse application/json
 app.use(bodyParser.json());
+
+app.post('/sun/uniurls', async function (req, res) {
+    try {
+        const urls = req.body.urls || [];
+        const result = await getUniurls(urls);
+        res.send(result);
+    } catch (ex) {
+        res.send({
+            error: 1,
+            errorMessage: `[/sun/uniurls] process error, error = ${ex}`
+        })
+    }
+});
 
 app.post('/sun/stattrans', async function (req, res) {
     const trans = req.body.trans || [];

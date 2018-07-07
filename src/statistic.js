@@ -135,24 +135,32 @@ async function statUrls(urls) {
         let isPageFullLoaded = true;
         try {
             await page.goto(url, {
-                timeout: 30 * 1000,
-                waitUntil: 'networkidle2',
+                timeout: 5 * 1000,
+                // waitUntil: 'networkidle2',
             });
         } catch (ex) {
             isPageFullLoaded = false;
         }
         // await delay10Secs();
-        let isSdkInstalled = false;
+        let info = {
+            isSdkInstalled: false,
+            isFenghuaJs: false
+        };
         try {
-            isSdkInstalled = await page.evaluate(function () {
-                return !!(window._agl && window._agl.isAngelia);
+            info = await page.evaluate(function () {
+                var isSdkInstalled = !!(window._agl && window._agl.isAngelia);
+                var isFenghuaJs = !!(window._bdSiteStatConf && window._bdSiteStatConf.guid);
+                return {
+                    isFenghuaJs: isFenghuaJs,
+                    isSdkInstalled: isSdkInstalled
+                };
             });
         } catch (ex) {
             // ignore
         }
         result.push({
             url,
-            isSdkInstalled,
+            ...info,
             isPageFullLoaded
         })
     }
